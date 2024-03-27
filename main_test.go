@@ -54,7 +54,7 @@ func TestDeleteAlbum(t *testing.T) {
 func TestUpdateAlbumNotFound(t *testing.T) {
 	albumID := "11"
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("PUT", "/albums/"+albumID, nil)
+	req, _ := http.NewRequest("PUT", "/albums/"+albumID, strings.NewReader(`{"title":"test"}`))
 	handleRequest(w, req)
 	if w.Code != http.StatusNotFound {
 		t.Fatal("status => 404")
