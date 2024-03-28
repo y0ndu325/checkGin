@@ -12,6 +12,12 @@ func handleRequest(w *httptest.ResponseRecorder, r *http.Request) {
 	router.ServeHTTP(w, r)
 }
 
+func createTestAlbum() album {
+	TestAlbum := album{ID: "2", Title: "test", Artist: "test", Price: 123.0}
+	storage.Create(TestAlbum)
+	return TestAlbum
+}
+
 func TestAlbumList(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/albums", nil)
@@ -22,9 +28,9 @@ func TestAlbumList(t *testing.T) {
 }
 
 func TestAlbum(t *testing.T) {
-	albumID := "1"
+	testAlbum := createTestAlbum()
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/albums/"+albumID, nil)
+	req, _ := http.NewRequest("GET", "/albums/"+testAlbum.ID, nil)
 	handleRequest(w, req)
 	if w.Code != http.StatusOK {
 		t.Fatal("status not ok")
@@ -42,8 +48,8 @@ func TestAlbumNotFound(t *testing.T) {
 }
 
 func TestDeleteAlbum(t *testing.T) {
-	albumId := "1"
-	request, _ := http.NewRequest("DELETE", "/albums/"+albumId, nil)
+	TestAlbum := createTestAlbum()
+	request, _ := http.NewRequest("DELETE", "/albums/"+TestAlbum.ID, nil)
 	w := httptest.NewRecorder()
 	handleRequest(w, request)
 	if w.Code != http.StatusNoContent {
@@ -62,9 +68,9 @@ func TestUpdateAlbumNotFound(t *testing.T) {
 }
 
 func TestUpdateAlbum(t *testing.T) {
-	albumID := "2"
+	TestAlbum := createTestAlbum()
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("PUT", "/albums/"+albumID, strings.NewReader(`{"title":"test"}`))
+	req, _ := http.NewRequest("PUT", "/albums/"+TestAlbum.ID, strings.NewReader(`{"title":"test"}`))
 	handleRequest(w, req)
 	if w.Code != http.StatusOK {
 		t.Fatal("status => ok")
